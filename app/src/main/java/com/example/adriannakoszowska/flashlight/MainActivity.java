@@ -46,12 +46,12 @@ public class MainActivity extends Activity {
                     .create();
             alert.setTitle("Error");
             alert.setMessage("Sorry, your device doesn't support flash light!");
-            alert.setButton("OK", new DialogInterface.OnClickListener() {
+            /*alert.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // closing the application
                     finish();
                 }
-            });
+            });*/
             alert.show();
             return;
         }
