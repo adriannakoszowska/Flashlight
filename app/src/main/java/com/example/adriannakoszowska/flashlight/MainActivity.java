@@ -55,6 +55,22 @@ public class MainActivity extends Activity {
             alert.show();
             return;
         }
+/*
+ * Switch click event to toggle flash on/off
+ */
+        btnSwitch.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (isFlashOn) {
+                    // turn off flash
+                    turnOffFlash();
+                } else {
+                    // turn on flash
+                    turnOnFlash();
+                }
+            }
+        });
     }
     // getting camera parameters
     private void getCamera() {
@@ -88,8 +104,29 @@ public class MainActivity extends Activity {
             // changing button/switch image
             toggleButtonImage();
         }
-
     }
+    /*
+ * Turning Off flash
+ */
+    private void turnOffFlash() {
+        if (isFlashOn) {
+            if (camera == null || params == null) {
+                return;
+            }
+            // play sound
+            playSound();
+
+            params = camera.getParameters();
+            params.setFlashMode(Parameters.FLASH_MODE_OFF);
+            camera.setParameters(params);
+            camera.stopPreview();
+            isFlashOn = false;
+
+            // changing button/switch image
+            toggleButtonImage();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
