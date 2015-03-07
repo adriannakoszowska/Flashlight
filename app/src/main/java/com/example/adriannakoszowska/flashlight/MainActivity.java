@@ -56,6 +56,40 @@ public class MainActivity extends Activity {
             return;
         }
     }
+    // getting camera parameters
+    private void getCamera() {
+        if (camera == null) {
+            try {
+                camera = Camera.open();
+                params = camera.getParameters();
+            } catch (RuntimeException e) {
+                Log.e("Camera Error. Failed to Open. Error: ", e.getMessage());
+            }
+        }
+    }
+
+    /*
+    * Turning On flash
+    */
+    private void turnOnFlash() {
+        if (!isFlashOn) {
+            if (camera == null || params == null) {
+                return;
+            }
+            // play sound
+            playSound();
+
+            params = camera.getParameters();
+            params.setFlashMode(Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(params);
+            camera.startPreview();
+            isFlashOn = true;
+
+            // changing button/switch image
+            toggleButtonImage();
+        }
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
