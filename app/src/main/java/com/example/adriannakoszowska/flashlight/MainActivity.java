@@ -36,6 +36,8 @@ public class MainActivity extends Activity {
         // flash switch button
         btnSwitch = (ImageButton) findViewById(R.id.btnSwitch);
 
+
+        // First check if device is supporting flashlight or not
         hasFlash = getApplicationContext().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
@@ -46,18 +48,24 @@ public class MainActivity extends Activity {
                     .create();
             alert.setTitle("Error");
             alert.setMessage("Sorry, your device doesn't support flash light!");
-            /*alert.setButton("OK", new DialogInterface.OnClickListener() {
+            alert.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // closing the application
                     finish();
                 }
-            });*/
+            });
             alert.show();
             return;
         }
-/*
- * Switch click event to toggle flash on/off
- */
+
+        // get the camera
+        getCamera();
+
+        // displaying button image
+        toggleButtonImage();
+
+
+        // Switch button click event to toggle flash on/off
         btnSwitch.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -72,7 +80,9 @@ public class MainActivity extends Activity {
             }
         });
     }
-    // getting camera parameters
+
+
+    // Get the camera
     private void getCamera() {
         if (camera == null) {
             try {
@@ -84,16 +94,13 @@ public class MainActivity extends Activity {
         }
     }
 
-    /*
-    * Turning On flash
-    */
+
+    // Turning On flash
     private void turnOnFlash() {
         if (!isFlashOn) {
             if (camera == null || params == null) {
                 return;
             }
-            // play sound
-            playSound();
 
             params = camera.getParameters();
             params.setFlashMode(Parameters.FLASH_MODE_TORCH);
@@ -104,17 +111,16 @@ public class MainActivity extends Activity {
             // changing button/switch image
             toggleButtonImage();
         }
+
     }
-    /*
- * Turning Off flash
- */
+
+
+    // Turning Off flash
     private void turnOffFlash() {
         if (isFlashOn) {
             if (camera == null || params == null) {
                 return;
             }
-            // play sound
-            playSound();
 
             params = camera.getParameters();
             params.setFlashMode(Parameters.FLASH_MODE_OFF);
@@ -127,25 +133,62 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    /*
+     * Toggle switch button images
+     * changing image states to on / off
+     * */
+    private void toggleButtonImage(){
+        if(isFlashOn){
+            //btnSwitch.setImageResource(R.drawable.btn_star_big_on);
+        }else{
+            //btnSwitch.setImageResource(R.drawable.btn_switch_off);
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // on pause turn off the flash
+        turnOffFlash();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // on resume turn on the flash
+        if(hasFlash)
+            turnOnFlash();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // on starting the app get the camera params
+        getCamera();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // on stop release the camera
+        if (camera != null) {
+            camera.release();
+            camera = null;
+        }
+    }
+
 }
